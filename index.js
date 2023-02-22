@@ -46,6 +46,11 @@ app.get("/users", async (req, res) => {
 
 // Create register route (POST) using UserSchema model (model\User.js)
 app.post("/register", async (req, res) => {
+  // Check if email exists
+  const checkEmail = await User.findOne({ email: req.body.email });
+  if (checkEmail)
+    return res.status(400).json({ message: "Email already exists", data: {} });
+
   // Hash password
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash("password", salt);
@@ -68,20 +73,19 @@ app.post("/register", async (req, res) => {
 // Create login route (POST) using UserSchema model (model\User.js)
 app.post("/login", async (req, res) => {
   // Check if email exists
-  const checkEmail = await User.findOne({ email: req.body.email });
-  if (!checkEmail) return res.status(400).json({ message: "Email not found" });
+  const getUser = await User.findOne({ email: req.body.email });
+  if (!getUser) return res.status(400).json({ message: "User not found" });
 
   // Check if password is correct
   const validPassword = await bcrypt.compare(
     req.body.password,
-    checkEmail.password
+    getUser.password
   );
 
   if (!validPassword) {
     return res.status(400).json({ message: "Invalid password" });
   }
-
-  return res.status(200).json({ message: "Logged in" });
+  return res.status(200).json({ message: "success", data: getUser });
 });
 
 // app.use((err, req, res, next) => {
