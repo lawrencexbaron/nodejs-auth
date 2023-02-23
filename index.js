@@ -3,7 +3,7 @@ const dotenv = require("dotenv").config();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const router = express.Router();
-const AuthRoutes = require("./routes/authRoutes");
+const AuthRoutes = require("./routes/auth");
 
 // Express App
 const app = express();
@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/api", AuthRoutes);
+app.use("/api/auth", AuthRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Hello World" });
